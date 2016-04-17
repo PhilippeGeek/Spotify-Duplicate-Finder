@@ -26,12 +26,12 @@
             <ul class="nav navbar-nav">
                 <li class="active"><a href="#">Finder</a></li>
             </ul>
-            <ul class="nav navbar-nav navbar-right">
+            <ul class="nav navbar-nav navbar-right" ng-controller="AuthCtrl">
                 <li ng-if="access_token == ''">
-                    <a href="#/login" class="dropdown-toggle" data-toggle="dropdown"><b>Login With Spotify</b></a>
+                    <a href="#" ng-click="login()" class="dropdown-toggle" data-toggle="dropdown"><b>Login With Spotify</b></a>
                 </li>
                 <li ng-if="access_token != ''">
-                    <a href="#/refresh-token" class="dropdown-toggle" data-toggle="dropdown"><b>Refresh my token</b></a>
+                    <a href="#" ng-click="refresh()" class="dropdown-toggle" data-toggle="dropdown"><b>Refresh my token</b></a>
                 </li>
             </ul>
         </div><!-- /.navbar-collapse -->

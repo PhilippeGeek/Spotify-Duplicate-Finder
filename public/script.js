@@ -37,9 +37,38 @@
         $urlRouterProvider.otherwise("/");
     }]);
 
+    app.run(['$rootScope',function($rootScope){
+        $rootScope.access_token = "";
+        $rootScope.refresh_token = "";
+    }]);
+
+    app.controller("HomeCtrl",['$scope',function($scope){
+
+    }]);
+
+    app.controller("MainCtrl",['$scope',function($scope){
+
+    }]);
+
+    app.controller("PlaylistCtrl",['$scope',function($scope){
+
+    }]);
+
+    app.controller("DupsCtrl",['$scope',function($scope){
+
+    }]);
+
     app.controller('AuthCtrl',['$scope', '$rootScope', function($scope, $rootScope){
-        $rootScope.access_token = "Bonjour";
-        $rootScope.refresh_token = "Bonjour2";
+        $scope.login = function(){
+            var openUrl = '/login';
+            window.$windowScope = $scope;
+            window.open(openUrl, "Authenticate Account", "width=500, height=500");
+        };
+        $scope.refresh = function(){
+            var openUrl = '/refresh_token';
+            window.$windowScope = $scope;
+            window.open(openUrl, "Authenticate Account", "width=500, height=500");
+        }
     }])
 
 })();
