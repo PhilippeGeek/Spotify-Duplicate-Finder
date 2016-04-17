@@ -1,0 +1,46 @@
+#login, #loggedin, #obtain-new-token {
+    display: none;
+}
+
+.text-overflow {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 500px;
+}
+
+.spinner {
+    display: none;
+    width: 0;
+    float: right;
+    margin-left: 5px;
+}
+
+.has-spinner.loading .spinner {
+    display: inline-block;
+    width: 16px; /* This doesn't work, just fix for unkown width elements */
+}
+
+#get-playlists {
+    float: right;
+}
+
+.pl_item {
+    text-align: left;
+}
+
+.glyphicon.glyphicon-chevron-right {
+    float: right;
+    display: inline-block;
+    width: 16px;
+    margin-left: 5px;
+}
+
+#loggedin .media .pull-left {
+    min-width: 20%;
+}
+
+.loading .glyphicon-chevron-right.glyphicon-chevron-right {
+    display: none;
+    width: 0;
+}

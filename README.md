@@ -7,7 +7,7 @@ This app lets you find duplicates in your Spotify playlists.
 ## Usage
 When using the application, you should first login with Spotify. The app only requests access to your private and collaborative playlists.
 
-After login, you can get all the playlists by clicking the `Get playlists` button. It may take a while if you have many ones.
+After login, you can get all the playlists by clicking the `Refresh` button. It may take a while if you have many ones.
 
 After playlists are loaded, you can click on any name to launch duplicates finding. This may also take a while as Spotify only allows me to retrieve tracks 100 by 100.
 

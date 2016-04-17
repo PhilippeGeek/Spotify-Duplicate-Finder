@@ -142,7 +142,7 @@ app.get('/get_playlists', function (req, res) {
         json: true
     };
 
-    getAllPages(authOptions, [], function(data) {
+    getAllPages(authOptions, [], function (data) {
         res.send({
             'data': data
         });
