@@ -135,7 +135,9 @@ app.get('/get_playlists', function (req, res) {
     var access_token = req.query.access_token;
     var next = req.query.next;
     var authOptions = {
-        url: next ? next : 'https://api.spotify.com/v1/me/playlists',
+        url: next ? next : 'https://api.spotify.com/v1/me/playlists?' + querystring.stringify({
+            limit: 50
+        }),
         headers: {'Authorization': 'Bearer ' + access_token},
         json: true
     };
