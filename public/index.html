@@ -64,6 +64,9 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
 <script src="https://code.jquery.com/jquery-1.12.3.min.js"></script>
 <script>
+    var access_token;
+    var refresh_token;
+    var error;
     (function () {
 
         /**
@@ -104,9 +107,9 @@
 
         var params = getHashParams();
 
-        var access_token = params.access_token,
-                refresh_token = params.refresh_token,
-                error = params.error;
+        access_token = params.access_token;
+        refresh_token = params.refresh_token;
+        error = params.error;
 
         if (error) {
             alert('There was an error during the authentication');
@@ -162,7 +165,7 @@
                 var currentElement = $(this);
                 currentElement.addClass('active');
                 currentElement.addClass('loading');
-                $('#dups').toggleClass('hide');
+                $('#dups').hide();
                 $.ajax({
                     url: $(this).attr('href'),
                     data: {
@@ -189,25 +192,29 @@
                             pl_name: pl_name
                         });
                     }
-                    $('#dups').toggleClass('hide');
+                    $('#dups').show();
                 })
             });
 
             $(document).on('click', '#obtain-new-token', function () {
-                var button = $(this);
-                button.addClass('loading');
-                $.ajax({
-                    url: '/refresh_token',
-                    data: {
-                        'refresh_token': refresh_token
-                    }
-                }).done(function (data) {
-                    access_token = data.access_token;
-                    button.removeClass('loading');
-                });
+                refreshToken();
             });
         }
     })();
+
+    function refreshToken() {
+        var button = $('#obtain-new-token');
+        button.addClass('loading');
+        $.ajax({
+            url: '/refresh_token',
+            data: {
+                'refresh_token': refresh_token
+            }
+        }).done(function (data) {
+            access_token = data.access_token;
+            button.removeClass('loading');
+        });
+    }
 </script>
 </body>
 </html>
