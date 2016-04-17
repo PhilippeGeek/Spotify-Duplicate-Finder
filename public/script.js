@@ -161,6 +161,7 @@ function getPersonnalInfo(first, userProfilePlaceholder, userProfileTemplate) {
             userProfilePlaceholder.innerHTML = userProfileTemplate(response);
 
             $('#login').hide();
+            $('#obtain-new-token').show();
             $('#loggedin').show();
         },
         error: function (response) {

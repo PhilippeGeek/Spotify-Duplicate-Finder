@@ -10,9 +10,12 @@
 <body>
 <div class="container">
     <h1>Duplicates finder
-        <div id="login">
+        <button class="btn btn-default has-spinner" id="obtain-new-token">
+            Refresh token <span class="spinner"><i class="icon-spin icon-refresh"></i></span>
+        </button>
+        <span id="login">
             <a href="/login" class="btn btn-lg btn-success">Log in with Spotify</a>
-        </div>
+        </span>
     </h1>
     <div id="error"></div>
     <div id="loggedin">
@@ -49,9 +52,6 @@
 
 <script id="user-profile-template" type="text/x-handlebars-template">
     Logged in as {{display_name}}
-    <button class="btn btn-default has-spinner" id="obtain-new-token">
-        Refresh token <span class="spinner"><i class="icon-spin icon-refresh"></i></span>
-    </button>
 </script>
 
 <script id="dups-template" type="text/x-handlebars-template">

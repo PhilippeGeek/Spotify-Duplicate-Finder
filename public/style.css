@@ -1,9 +1,5 @@
-#login, #loggedin {
+#login, #loggedin, #obtain-new-token {
     display: none;
-}
-
-#login {
-    display: inline-block;
 }
 
 .text-overflow {
@@ -23,10 +19,6 @@
 .has-spinner.loading .spinner {
     display: inline-block;
     width: 16px; /* This doesn't work, just fix for unkown width elements */
-}
-
-#get-playlists {
-    float: right;
 }
 
 .pl_item {
