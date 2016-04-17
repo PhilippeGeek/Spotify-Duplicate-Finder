@@ -4,46 +4,7 @@
     <title>Spotify Duplicate Finder</title>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/3.0.2/css/font-awesome.css">
-    <style type="text/css">
-        #login, #loggedin {
-            display: none;
-        }
-
-        .text-overflow {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            width: 500px;
-        }
-
-        .spinner {
-            display: none;
-            width: 0;
-            float: right;
-            margin-left: 5px;
-        }
-
-        .has-spinner.loading .spinner {
-            display: inline-block;
-            width: 16px; /* This doesn't work, just fix for unkown width elements */
-        }
-
-        .pl_item {
-            text-align: left;
-        }
-
-        .glyphicon.glyphicon-chevron-right {
-            float: right;
-            display: inline-block;
-            width: 16px;
-            margin-left: 5px;
-        }
-
-        .loading .glyphicon-chevron-right.glyphicon-chevron-right {
-            display: none;
-            width: 0;
-        }
-    </style>
+    <link rel="stylesheet" href="./style.css">
 </head>
 
 <body>
@@ -53,15 +14,17 @@
         <a href="/login" class="btn btn-primary">Log in with Spotify</a>
     </div>
     <div id="loggedin">
+        <h1>Duplicates finder</h1>
         <div id="user-profile">
         </div>
 
-        <h1>Duplicates finder</h1>
-        <button class="btn btn-default has-spinner" id="get-playlists">
-            Get playlists <span class="spinner"><i class="icon-spin icon-refresh"></i></span>
-        </button>
         <div class="media">
             <div class="pull-left">
+                <h2 id="playlists-title">Playlists
+                    <button class="btn btn-default has-spinner" id="get-playlists">
+                        Refresh <span class="spinner"><i class="icon-spin icon-refresh"></i></span>
+                    </button>
+                </h2>
                 <div id="playlists">
                 </div>
             </div>
@@ -73,23 +36,21 @@
     </div>
 </div>
 
-<script id="user-profile-template" type="text/x-handlebars-template">
-    <h1>Logged in as {{display_name}}</h1>
-    <div id="oauth">
-    </div>
-    <button class="btn btn-default has-spinner" id="obtain-new-token">
-        Obtain new token using the refresh token <span class="spinner"><i class="icon-spin icon-refresh"></i></span>
-    </button>
+<script id="playlists-template" type="text/x-handlebars-template">
+    {{#list playlists}}
+    <a class="pl_item list-group-item has-spinner" href="/pl/{{pl_uid}}/{{pl_id}}">
+        {{pl_name}}
+        <span class="spinner"><i class="icon-spin icon-refresh"></i></span>
+        <i class="glyphicon glyphicon-chevron-right"></i>
+    </a>
+    {{/list}}
 </script>
 
-<script id="oauth-template" type="text/x-handlebars-template">
-    <h2>oAuth info</h2>
-    <dl class="dl-horizontal">
-        <dt>Access token</dt>
-        <dd class="text-overflow">{{access_token}}</dd>
-        <dt>Refresh token</dt>
-        <dd class="text-overflow">{{refresh_token}}></dd>
-    </dl>
+<script id="user-profile-template" type="text/x-handlebars-template">
+    Logged in as {{display_name}}
+    <button class="btn btn-default has-spinner" id="obtain-new-token">
+        Refresh token <span class="spinner"><i class="icon-spin icon-refresh"></i></span>
+    </button>
 </script>
 
 <script id="dups-template" type="text/x-handlebars-template">
@@ -97,17 +58,6 @@
     {{message}}
     {{#list dups}}
     <div class="list-group-item">{{dup_trackname}} - {{dup_artist}}</div>
-    {{/list}}
-</script>
-
-<script id="playlists-template" type="text/x-handlebars-template">
-    <h2>Playlists</h2>
-    {{#list playlists}}
-    <a class="pl_item list-group-item has-spinner" href="/pl/{{pl_uid}}/{{pl_id}}">
-        {{pl_name}}
-        <span class="spinner"><i class="icon-spin icon-refresh"></i></span>
-        <i class="glyphicon glyphicon-chevron-right"></i>
-    </a>
     {{/list}}
 </script>
 
@@ -152,10 +102,6 @@
                 dupsTemplate = Handlebars.compile(dupsSource),
                 dupsPlaceholder = document.getElementById('dups');
 
-        var oauthSource;
-        var oauthTemplate;
-        var oauthPlaceholder;
-
         var params = getHashParams();
 
         var access_token = params.access_token,
@@ -173,16 +119,6 @@
                     },
                     success: function (response) {
                         userProfilePlaceholder.innerHTML = userProfileTemplate(response);
-
-                        oauthSource = document.getElementById('oauth-template').innerHTML;
-                        oauthTemplate = Handlebars.compile(oauthSource);
-                        oauthPlaceholder = document.getElementById('oauth');
-
-                        // render oauth info
-                        oauthPlaceholder.innerHTML = oauthTemplate({
-                            access_token: access_token,
-                            refresh_token: refresh_token
-                        });
 
                         $('#login').hide();
                         $('#loggedin').show();
@@ -203,7 +139,7 @@
                         'access_token': access_token
                     }
                 }).done(function (data) {
-                    var pl = data.data.map(function (item, index, array) {
+                    var pl = data.data.map(function (item) {
                         return {
                             pl_uid: item.owner.id,
                             pl_name: item.name,
@@ -268,10 +204,6 @@
                 }).done(function (data) {
                     access_token = data.access_token;
                     button.removeClass('loading');
-                    oauthPlaceholder.innerHTML = oauthTemplate({
-                        access_token: access_token,
-                        refresh_token: refresh_token
-                    });
                 });
             });
         }
