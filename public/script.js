@@ -1,5 +1,15 @@
 'use strict';
 
+(function(){
+
+    var app = angular.module('app',[]);
+
+    app.controller('AuthCtrl',['$scope', function($scope){
+
+    }])
+
+})();
+
 var access_token;
 var refresh_token;
 var error;
