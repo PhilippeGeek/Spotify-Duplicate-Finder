@@ -88,10 +88,23 @@
         $scope.load();
     }]);
 
-    app.controller("DupsCtrl",['$scope', '$stateParams',function($scope, $stateParams){
+    app.controller("DupsCtrl",['$scope', '$stateParams', '$http',function($scope, $stateParams, $http){
         $scope.uid = $stateParams['uid'];
         $scope.id = $stateParams['id'];
-
+        $scope.tracks = [];
+        $scope.loaded = false;
+        $scope.load = function () {
+            $http.get('/pl/' + $scope.uid + '/' + $scope.id, {
+                params: {
+                    access_token: $scope.access_token
+                }
+            }).then(function(result) {
+                var r = result.data;
+                $scope.tracks = r.data;
+                $scope.loaded = true;
+            });
+        };
+        $scope.load();
     }]);
 
     app.controller('AuthCtrl',['$scope', '$rootScope', '$interval', '$http', function($scope, $rootScope, $interval, $http){
