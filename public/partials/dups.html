@@ -1,6 +1,6 @@
-<h2>Results</h2>
+<h2>Duplicates in {{playlistName}}</h2>
 <div ng-if="loaded == false">Loading...</div>
-<div ng-if="tracks.length == 0 && loaded">No duplicates found</div>
+<div ng-if="tracks.length == 0 && loaded">No duplicate found</div>
 <div ng-if="tracks.length > 0 && loaded">
     <div class="list-group-item" ng-repeat="t in tracks">
         {{t.track.name}} - <span ng-repeat="artist in t.track.artists">{{artist == t.track.artists[0]?'':', '}}{{artist.name}}</span>

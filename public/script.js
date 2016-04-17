@@ -30,7 +30,7 @@
                 }
             })
             .state('finder.playlist.dups',{
-                url: '/:uid/:id',
+                url: '/:uid/:id/:playlist',
                 views: {
                     'dups@finder': {
                         templateUrl: 'partials/dups.html',
@@ -93,7 +93,7 @@
         };
         $scope.open = function(playlist) {
             $scope.current.playlistId = playlist.id;
-            $state.go('finder.playlist.dups',{uid: playlist.owner.id, id: playlist.id})
+            $state.go('finder.playlist.dups',{uid: playlist.owner.id, id: playlist.id, playlist: encodeURIComponent(playlist.name)})
         };
         $scope.load();
     }]);
@@ -101,6 +101,7 @@
     app.controller("DupsCtrl",['$scope', '$stateParams', '$http',function($scope, $stateParams, $http){
         $scope.uid = $stateParams['uid'];
         $scope.id = $stateParams['id'];
+        $scope.playlistName = decodeURIComponent($stateParams.playlist);
         $scope.current.playlistId = $scope.id;
         $scope.tracks = [];
         $scope.loaded = false;
