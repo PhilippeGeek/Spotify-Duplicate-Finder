@@ -3,6 +3,23 @@
 var access_token;
 var refresh_token;
 var error;
+
+var userProfileSource = document.getElementById('user-profile-template').innerHTML,
+    userProfileTemplate = Handlebars.compile(userProfileSource),
+    userProfilePlaceholder = document.getElementById('user-profile');
+
+var playlistsSource = document.getElementById('playlists-template').innerHTML,
+    playlistsTemplate = Handlebars.compile(playlistsSource),
+    playlistsPlaceholder = document.getElementById('playlists');
+
+var dupsSource = document.getElementById('dups-template').innerHTML,
+    dupsTemplate = Handlebars.compile(dupsSource),
+    dupsPlaceholder = document.getElementById('dups');
+
+var errorSource = document.getElementById('error-template').innerHTML,
+    errorTemplate = Handlebars.compile(errorSource),
+    errorPlaceholder = document.getElementById('error');
+
 (function () {
 
     /**
@@ -29,18 +46,6 @@ var error;
         return out + "</div>";
     });
 
-    var userProfileSource = document.getElementById('user-profile-template').innerHTML,
-        userProfileTemplate = Handlebars.compile(userProfileSource),
-        userProfilePlaceholder = document.getElementById('user-profile');
-
-    var playlistsSource = document.getElementById('playlists-template').innerHTML,
-        playlistsTemplate = Handlebars.compile(playlistsSource),
-        playlistsPlaceholder = document.getElementById('playlists');
-
-    var dupsSource = document.getElementById('dups-template').innerHTML,
-        dupsTemplate = Handlebars.compile(dupsSource),
-        dupsPlaceholder = document.getElementById('dups');
-
     var params = getHashParams();
 
     access_token = params.access_token;
@@ -48,7 +53,11 @@ var error;
     error = params.error;
 
     if (error) {
-        alert('There was an error during the authentication');
+
+        errorPlaceholder.innerHTML = errorTemplate({
+            err_title: 'Error!',
+            err_content: 'There was an error during the authentication. Feel free to <a href="https://github.com/Crocmagnon/Spotify-Duplicate-Finder/issues" class="alert-link">open an issue</a>.'
+        });
     } else {
         if (access_token) {
             getPersonnalInfo(true, userProfilePlaceholder, userProfileTemplate);
@@ -160,7 +169,10 @@ function getPersonnalInfo(first, userProfilePlaceholder, userProfileTemplate) {
                     getPersonnalInfo(false, userProfilePlaceholder, userProfileTemplate);
                 }
                 else {
-                    alert("Error getting personnal info");
+                    errorPlaceholder.innerHTML = errorTemplate({
+                        err_title: 'Error!',
+                        err_content: 'Error while refreshing token. Please <a href="/" class="alert-link">return to login</a>.'
+                    });
                 }
             }
         }
