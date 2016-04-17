@@ -3,6 +3,7 @@
 <head>
     <title>Spotify Duplicate Finder</title>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/3.0.2/css/font-awesome.css">
     <style type="text/css">
         #login, #loggedin {
             display: none;
@@ -13,6 +14,38 @@
             text-overflow: ellipsis;
             white-space: nowrap;
             width: 500px;
+        }
+
+        .spinner {
+             display: inline-block;
+             opacity: 0;
+             width: 0;
+
+             -webkit-transition: opacity 0.25s, width 0.25s;
+             -moz-transition: opacity 0.25s, width 0.25s;
+             -o-transition: opacity 0.25s, width 0.25s;
+             transition: opacity 0.25s, width 0.25s;
+         }
+
+        .has-spinner.loading .spinner {
+            opacity: 1;
+            width: auto; /* This doesn't work, just fix for unkown width elements */
+        }
+
+        .has-spinner.btn-mini.loading .spinner {
+            width: 10px;
+        }
+
+        .has-spinner.btn-small.loading .spinner {
+            width: 13px;
+        }
+
+        .has-spinner.btn.loading .spinner {
+            width: 16px;
+        }
+
+        .has-spinner.btn-large.loading .spinner {
+            width: 19px;
         }
     </style>
 </head>
@@ -28,15 +61,13 @@
         </div>
 
         <h1>Duplicates finder</h1>
-        <button class="btn btn-default" id="get-playlists">Get playlists</button>
-        <div id="spin-playlists"></div>
+        <button class="btn btn-default has-spinner" id="get-playlists">Get playlists <span class="spinner"><i class="icon-spin icon-refresh"></i></span></button>
         <div class="media">
             <div class="pull-left">
                 <div id="playlists">
                 </div>
             </div>
             <div class="media-body">
-                <div id="spin-dups"></div>
                 <div id="dups">
                 </div>
             </div>
@@ -48,7 +79,7 @@
     <h1>Logged in as {{display_name}}</h1>
     <div id="oauth">
     </div>
-    <button class="btn btn-default" id="obtain-new-token">Obtain new token using the refresh token</button>
+    <button class="btn btn-default has-spinner" id="obtain-new-token">Obtain new token using the refresh token <span class="spinner"><i class="icon-spin icon-refresh"></i></span></button>
 </script>
 
 <script id="oauth-template" type="text/x-handlebars-template">
@@ -69,12 +100,11 @@
 
 <script id="playlists-template" type="text/x-handlebars-template">
     <h2>Playlists</h2>
-    {{#list playlists}}<a class="pl_item list-group-item" href="/pl/{{pl_uid}}/{{pl_id}}">{{pl_name}}</a>{{/list}}
+    {{#list playlists}}<a class="pl_item list-group-item btn has-spinner" href="/pl/{{pl_uid}}/{{pl_id}}">{{pl_name}} <span class="spinner"><i class="icon-spin icon-refresh"></i></span></a>{{/list}}
 </script>
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
 <script src="https://code.jquery.com/jquery-1.12.3.min.js"></script>
-<script src="https://fgnass.github.io/spin.js/spin.min.js"></script>
 <script>
     (function () {
 
@@ -101,30 +131,6 @@
 
             return out + "</div>";
         });
-
-        // Spinner options
-        var spinnerOpts = {
-            lines: 13 // The number of lines to draw
-            , length: 0 // The length of each line
-            , width: 28 // The line thickness
-            , radius: 58 // The radius of the inner circle
-            , scale: 0.25 // Scales overall size of the spinner
-            , corners: 1 // Corner roundness (0..1)
-            , color: '#000' // #rgb or #rrggbb or array of colors
-            , opacity: 0.25 // Opacity of the lines
-            , rotate: 0 // The rotation offset
-            , direction: 1 // 1: clockwise, -1: counterclockwise
-            , speed: 1 // Rounds per second
-            , trail: 60 // Afterglow percentage
-            , fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
-            , zIndex: 2e9 // The z-index (defaults to 2000000000)
-            , className: 'spinner' // The CSS class to assign to the spinner
-            , top: '50%' // Top position relative to parent
-            , left: '50%' // Left position relative to parent
-            , shadow: false // Whether to render a shadow
-            , hwaccel: false // Whether to use hardware acceleration
-            , position: 'absolute' // Element positioning
-        };
 
         var userProfileSource = document.getElementById('user-profile-template').innerHTML,
                 userProfileTemplate = Handlebars.compile(userProfileSource),
@@ -181,8 +187,8 @@
             }
 
             document.getElementById('get-playlists').addEventListener('click', function () {
-                var target = document.getElementById('spin-playlists');
-                var spinner = new Spinner(spinnerOpts).spin(target);
+                var currentElement = $(this);
+                currentElement.addClass('loading');
                 $.ajax({
                     url: '/get_playlists',
                     data: {
@@ -197,7 +203,8 @@
                         }
                     });
 
-                    spinner.stop();
+                    currentElement.removeClass('loading');
+
                     playlistsPlaceholder.innerHTML = playlistsTemplate({
                         playlists: pl
                     });
@@ -208,9 +215,9 @@
                 e.preventDefault();
                 var pl_name = $(this).text();
                 $('.pl_item').removeClass('active');
-                $(this).addClass('active');
-                var target = document.getElementById('spin-dups');
-                var spinner = new Spinner(spinnerOpts).spin(target);
+                var currentElement = $(this);
+                currentElement.addClass('active');
+                currentElement.addClass('loading');
                 $.ajax({
                     url: $(this).attr('href'),
                     data: {
@@ -223,7 +230,7 @@
                             dup_artist: item.track.artists[0].name
                         }
                     });
-                    spinner.stop();
+                    currentElement.removeClass('loading');
                     if (data.data.length > 0) {
                         dupsPlaceholder.innerHTML = dupsTemplate({
                             dups: dups,
@@ -241,6 +248,8 @@
             });
 
             $(document).on('click', '#obtain-new-token', function () {
+                var button = $(this);
+                button.addClass('loading');
                 $.ajax({
                     url: '/refresh_token',
                     data: {
@@ -248,6 +257,7 @@
                     }
                 }).done(function (data) {
                     access_token = data.access_token;
+                    button.removeClass('loading');
                     oauthPlaceholder.innerHTML = oauthTemplate({
                         access_token: access_token,
                         refresh_token: refresh_token
