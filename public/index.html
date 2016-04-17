@@ -26,16 +26,19 @@
     <div id="loggedin">
         <div id="user-profile">
         </div>
-        <div id="oauth">
-        </div>
-        <button class="btn btn-default" id="obtain-new-token">Obtain new token using the refresh token</button>
 
         <h1>Duplicates finder</h1>
-        <div id="dups">
-        </div>
-        <div>
-            <button class="btn btn-default" id="get-playlists">Get playlists</button>
-            <div id="playlists">
+        <button class="btn btn-default" id="get-playlists">Get playlists</button>
+        <div id="spin-playlists"></div>
+        <div class="media">
+            <div class="pull-left">
+                <div id="playlists">
+                </div>
+            </div>
+            <div class="media-body">
+                <div id="spin-dups"></div>
+                <div id="dups">
+                </div>
             </div>
         </div>
     </div>
@@ -43,27 +46,9 @@
 
 <script id="user-profile-template" type="text/x-handlebars-template">
     <h1>Logged in as {{display_name}}</h1>
-    <div class="media">
-        <div class="pull-left">
-            <img class="media-object" width="150" src="{{images.0.url}}"/>
-        </div>
-        <div class="media-body">
-            <dl class="dl-horizontal">
-                <dt>Display name</dt>
-                <dd class="clearfix">{{display_name}}</dd>
-                <dt>Id</dt>
-                <dd>{{id}}</dd>
-                <dt>Spotify URI</dt>
-                <dd><a href="{{external_urls.spotify}}">{{external_urls.spotify}}</a></dd>
-                <dt>Link</dt>
-                <dd><a href="{{href}}">{{href}}</a></dd>
-                <dt>Profile Image</dt>
-                <dd class="clearfix"><a href="{{images.0.url}}">{{images.0.url}}</a></dd>
-                <dt>Country</dt>
-                <dd>{{country}}</dd>
-            </dl>
-        </div>
+    <div id="oauth">
     </div>
+    <button class="btn btn-default" id="obtain-new-token">Obtain new token using the refresh token</button>
 </script>
 
 <script id="oauth-template" type="text/x-handlebars-template">
@@ -89,6 +74,7 @@
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
 <script src="https://code.jquery.com/jquery-1.12.3.min.js"></script>
+<script src="https://fgnass.github.io/spin.js/spin.min.js"></script>
 <script>
     (function () {
 
@@ -107,23 +93,42 @@
         }
 
         Handlebars.registerHelper('list', function (items, options) {
-            var out = "<ul>";
+            var out = "<ul class='list-group'>";
 
             for (var i = 0, l = items.length; i < l; i++) {
-                out = out + "<li>" + options.fn(items[i]) + "</li>";
+                out = out + "<li class='list-group-item'>" + options.fn(items[i]) + "</li>";
             }
 
             return out + "</ul>";
         });
 
+        // Spinner options
+        var spinnerOpts = {
+            lines: 13 // The number of lines to draw
+            , length: 0 // The length of each line
+            , width: 28 // The line thickness
+            , radius: 58 // The radius of the inner circle
+            , scale: 0.25 // Scales overall size of the spinner
+            , corners: 1 // Corner roundness (0..1)
+            , color: '#000' // #rgb or #rrggbb or array of colors
+            , opacity: 0.25 // Opacity of the lines
+            , rotate: 0 // The rotation offset
+            , direction: 1 // 1: clockwise, -1: counterclockwise
+            , speed: 1 // Rounds per second
+            , trail: 60 // Afterglow percentage
+            , fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
+            , zIndex: 2e9 // The z-index (defaults to 2000000000)
+            , className: 'spinner' // The CSS class to assign to the spinner
+            , top: '50%' // Top position relative to parent
+            , left: '50%' // Left position relative to parent
+            , shadow: false // Whether to render a shadow
+            , hwaccel: false // Whether to use hardware acceleration
+            , position: 'absolute' // Element positioning
+        };
 
         var userProfileSource = document.getElementById('user-profile-template').innerHTML,
                 userProfileTemplate = Handlebars.compile(userProfileSource),
                 userProfilePlaceholder = document.getElementById('user-profile');
-
-        var oauthSource = document.getElementById('oauth-template').innerHTML,
-                oauthTemplate = Handlebars.compile(oauthSource),
-                oauthPlaceholder = document.getElementById('oauth');
 
         var playlistsSource = document.getElementById('playlists-template').innerHTML,
                 playlistsTemplate = Handlebars.compile(playlistsSource),
@@ -132,6 +137,10 @@
         var dupsSource = document.getElementById('dups-template').innerHTML,
                 dupsTemplate = Handlebars.compile(dupsSource),
                 dupsPlaceholder = document.getElementById('dups');
+
+        var oauthSource;
+        var oauthTemplate;
+        var oauthPlaceholder;
 
         var params = getHashParams();
 
@@ -143,12 +152,6 @@
             alert('There was an error during the authentication');
         } else {
             if (access_token) {
-                // render oauth info
-                oauthPlaceholder.innerHTML = oauthTemplate({
-                    access_token: access_token,
-                    refresh_token: refresh_token
-                });
-
                 $.ajax({
                     url: 'https://api.spotify.com/v1/me',
                     headers: {
@@ -156,6 +159,16 @@
                     },
                     success: function (response) {
                         userProfilePlaceholder.innerHTML = userProfileTemplate(response);
+
+                        oauthSource = document.getElementById('oauth-template').innerHTML;
+                        oauthTemplate = Handlebars.compile(oauthSource);
+                        oauthPlaceholder = document.getElementById('oauth');
+
+                        // render oauth info
+                        oauthPlaceholder.innerHTML = oauthTemplate({
+                            access_token: access_token,
+                            refresh_token: refresh_token
+                        });
 
                         $('#login').hide();
                         $('#loggedin').show();
@@ -168,6 +181,8 @@
             }
 
             document.getElementById('get-playlists').addEventListener('click', function () {
+                var target = document.getElementById('spin-playlists');
+                var spinner = new Spinner(spinnerOpts).spin(target);
                 $.ajax({
                     url: '/get_playlists',
                     data: {
@@ -176,12 +191,13 @@
                 }).done(function (data) {
                     var pl = data.data.map(function (item, index, array) {
                         return {
-                            pl_uid : item.owner.id,
-                            pl_name : item.name,
-                            pl_id : item.id
+                            pl_uid: item.owner.id,
+                            pl_name: item.name,
+                            pl_id: item.id
                         }
                     });
 
+                    spinner.stop();
                     playlistsPlaceholder.innerHTML = playlistsTemplate({
                         playlists: pl
                     });
@@ -191,6 +207,8 @@
             $(document).on('click', '.pl_item', function (e) {
                 e.preventDefault();
                 var pl_name = $(this).text();
+                var target = document.getElementById('spin-dups');
+                var spinner = new Spinner(spinnerOpts).spin(target);
                 $.ajax({
                     url: $(this).attr('href'),
                     data: {
@@ -203,15 +221,16 @@
                             dup_artist: item.track.artists[0].name
                         }
                     });
+                    spinner.stop();
                     if (data.data.length > 0) {
                         dupsPlaceholder.innerHTML = dupsTemplate({
-                            dups : dups,
-                            pl_name : pl_name
+                            dups: dups,
+                            pl_name: pl_name
                         });
                     }
                     else {
                         dupsPlaceholder.innerHTML = dupsTemplate({
-                            dups : [],
+                            dups: [],
                             message: "No duplicate found.",
                             pl_name: pl_name
                         });
@@ -219,7 +238,7 @@
                 })
             });
 
-            document.getElementById('obtain-new-token').addEventListener('click', function () {
+            $(document).on('click', '#obtain-new-token', function () {
                 $.ajax({
                     url: '/refresh_token',
                     data: {
@@ -232,7 +251,7 @@
                         refresh_token: refresh_token
                     });
                 });
-            }, false);
+            });
         }
     })();
 </script>
