@@ -28,10 +28,10 @@
             </ul>
             <ul class="nav navbar-nav navbar-right" ng-controller="AuthCtrl">
                 <li ng-if="access_token == ''">
-                    <a href="#" ng-click="login()" class="dropdown-toggle" data-toggle="dropdown"><b>Login With Spotify</b></a>
+                    <a ng-click="login()" href="#"><b>Login With Spotify</b></a>
                 </li>
                 <li ng-if="access_token != ''">
-                    <a href="#" ng-click="refresh()" class="dropdown-toggle" data-toggle="dropdown"><b>Refresh my token</b></a>
+                    <a ng-click="refresh()" href="#"><b>Refresh my token</b></a>
                 </li>
             </ul>
         </div><!-- /.navbar-collapse -->
