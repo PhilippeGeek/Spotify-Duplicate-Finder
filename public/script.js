@@ -51,18 +51,7 @@ var error;
         alert('There was an error during the authentication');
     } else {
         if (access_token) {
-            $.ajax({
-                url: 'https://api.spotify.com/v1/me',
-                headers: {
-                    'Authorization': 'Bearer ' + access_token
-                },
-                success: function (response) {
-                    userProfilePlaceholder.innerHTML = userProfileTemplate(response);
-
-                    $('#login').hide();
-                    $('#loggedin').show();
-                }
-            });
+            getPersonnalInfo(true, userProfilePlaceholder, userProfileTemplate);
         } else {
             // render initial screen
             $('#login').show();
@@ -149,5 +138,31 @@ function refreshToken() {
     }).done(function (data) {
         access_token = data.access_token;
         button.removeClass('loading');
+    });
+}
+
+function getPersonnalInfo(first, userProfilePlaceholder, userProfileTemplate) {
+    $.ajax({
+        url: 'https://api.spotify.com/v1/me',
+        headers: {
+            'Authorization': 'Bearer ' + access_token
+        },
+        success: function (response) {
+            userProfilePlaceholder.innerHTML = userProfileTemplate(response);
+
+            $('#login').hide();
+            $('#loggedin').show();
+        },
+        error: function (response) {
+            if (response.status == 401) {
+                if (first) {
+                    refreshToken();
+                    getPersonnalInfo(false, userProfilePlaceholder, userProfileTemplate);
+                }
+                else {
+                    alert("Error getting personnal info");
+                }
+            }
+        }
     });
 }
