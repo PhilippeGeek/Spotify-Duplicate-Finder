@@ -33,7 +33,8 @@
                         controller: 'DupsCtrl'
                     }
                 }
-            })
+            });
+        $urlRouterProvider.otherwise("/");
     }]);
 
     app.controller('AuthCtrl',['$scope', '$rootScope', function($scope, $rootScope){
