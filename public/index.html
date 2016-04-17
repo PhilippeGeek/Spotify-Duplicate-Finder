@@ -207,6 +207,8 @@
             $(document).on('click', '.pl_item', function (e) {
                 e.preventDefault();
                 var pl_name = $(this).text();
+                $('.pl_item').removeClass('active');
+                $(this).addClass('active');
                 var target = document.getElementById('spin-dups');
                 var spinner = new Spinner(spinnerOpts).spin(target);
                 $.ajax({
