@@ -68,8 +68,8 @@ var errorSource = document.getElementById('error-template').innerHTML,
         }
 
         document.getElementById('get-playlists').addEventListener('click', function () {
-            var currentElement = $(this);
-            currentElement.addClass('loading');
+            var button = $(this);
+            button.addClass('loading');
             $.ajax({
                 url: '/get_playlists',
                 data: {
@@ -84,7 +84,8 @@ var errorSource = document.getElementById('error-template').innerHTML,
                     }
                 });
 
-                currentElement.removeClass('loading');
+                button.removeClass('loading');
+                $('#dups').hide();
 
                 playlistsPlaceholder.innerHTML = playlistsTemplate({
                     playlists: pl
