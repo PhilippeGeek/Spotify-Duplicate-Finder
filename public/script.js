@@ -26,7 +26,7 @@
                 }
             })
             .state('finder.playlist.dups',{
-                url: '/playlist/:id',
+                url: '/playlist/:uid/:id',
                 views: {
                     dups: {
                         templateUrl: 'partials/dups.html',
@@ -37,9 +37,20 @@
         $urlRouterProvider.otherwise("/");
     }]);
 
-    app.run(['$rootScope',function($rootScope){
+    app.run(['$rootScope', '$state',function($rootScope, $state){
         $rootScope.access_token = "";
         $rootScope.refresh_token = "";
+        $rootScope.$watch('access_token',function(newVal, oldVal, scope){
+            if(oldVal == "" && newVal != ""){
+                $state.go('finder.playlist');
+            } else if (oldVal != "" && newVal == ""){
+                $state.go('finder_public');
+            }
+        });
+        if($rootScope.access_token == "")
+            $state.go('finder_public');
+        else
+            $state.go('finder.playlist');
     }]);
 
     app.controller("HomeCtrl",['$scope',function($scope){
@@ -50,12 +61,28 @@
 
     }]);
 
-    app.controller("PlaylistCtrl",['$scope',function($scope){
-
+    app.controller("PlaylistCtrl",['$scope', '$http', '$state',function($scope, $http, $state){
+        $scope.playlists = [];
+        $scope.load = function(){
+            $http.get('/get_playlists', {
+                params:{
+                    access_token: $scope.access_token
+                }
+            }).then(function(result){
+                var r = result.data;
+                if(r.data){
+                    $scope.playlists = r.data;
+                }
+            })
+        };
+        $scope.open = function(playlist) {
+            $state.go('finder.playlist.dups',{uid: playlist.owner.id, id: playlist.id})
+        }
     }]);
 
-    app.controller("DupsCtrl",['$scope',function($scope){
-
+    app.controller("DupsCtrl",['$scope', '$stateParams',function($scope, $stateParams){
+        $scope.uid = $stateParams['uid'];
+        $scope.id = $stateParams['id'];
     }]);
 
     app.controller('AuthCtrl',['$scope', '$rootScope', '$interval', '$http', function($scope, $rootScope, $interval, $http){

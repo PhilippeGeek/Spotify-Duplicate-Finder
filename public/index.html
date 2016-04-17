@@ -38,35 +38,7 @@
     </div><!-- /.container-fluid -->
 </nav>
 <div class="container">
-    <h1>Duplicates finder
-        <button class="btn btn-default has-spinner" id="obtain-new-token">
-            Refresh token <span class="spinner"><i class="icon-spin icon-refresh"></i></span>
-        </button>
-        <span id="login">
-            <a href="/login" class="btn btn-lg btn-success">Log in with Spotify</a>
-        </span>
-    </h1>
-    <div id="error"></div>
-    <div id="loggedin">
-        <div id="user-profile">
-        </div>
-
-        <div class="media">
-            <div class="pull-left">
-                <h2 id="playlists-title">Playlists
-                    <button class="btn btn-default has-spinner" id="get-playlists">
-                        Refresh <span class="spinner"><i class="icon-spin icon-refresh"></i></span>
-                    </button>
-                </h2>
-                <div id="playlists">
-                </div>
-            </div>
-            <div class="media-body">
-                <div id="dups">
-                </div>
-            </div>
-        </div>
-    </div>
+    <ui-view></ui-view>
 </div>
 
 <script id="playlists-template" type="text/x-handlebars-template">
