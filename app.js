@@ -91,16 +91,9 @@ app.get('/callback', function (req, res) {
                     refresh_token = body.refresh_token;
 
                 // we can also pass the token to the browser to make requests from there
-                res.redirect('/#' +
-                    querystring.stringify({
-                        access_token: access_token,
-                        refresh_token: refresh_token
-                    }));
+                res.send('<script>window.token = { access_token: "'+access_token+'", refresh_token: "'+refresh_token+'" };</script>')
             } else {
-                res.redirect('/#' +
-                    querystring.stringify({
-                        error: 'invalid_token'
-                    }));
+                res.send('<script>window.token = { access_token: "", refresh_token: "" };</script>')
             }
         });
     }

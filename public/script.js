@@ -58,11 +58,24 @@
 
     }]);
 
-    app.controller('AuthCtrl',['$scope', '$rootScope', function($scope, $rootScope){
+    app.controller('AuthCtrl',['$scope', '$rootScope', '$interval', function($scope, $rootScope, $interval){
         $scope.login = function(){
             var openUrl = '/login';
             window.$windowScope = $scope;
-            window.open(openUrl, "Authenticate Account", "width=500, height=500");
+            $scope.popup = window.open(openUrl, "Authenticate Account", "width=500, height=500");
+            var checker = $interval(function(){
+                if($scope.popup.closed){
+                    $interval.cancel(checker);
+                } else if ($scope.popup.token != undefined && $scope.popup.token != null) {
+                    $rootScope.access_token = $scope.popup.token.access_token;
+                    $rootScope.refresh_token = $scope.popup.token.refresh_token;
+                    $scope.popup.close();
+                    $interval.cancel(checker);
+                } else if ($scope.popup.token == null){
+                    $scope.popup.close();
+                    $interval.cancel(checker);
+                }
+            }, 500);
         };
         $scope.refresh = function(){
             var openUrl = '/refresh_token';
