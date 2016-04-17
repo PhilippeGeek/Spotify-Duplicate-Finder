@@ -84,13 +84,14 @@
         };
         $scope.open = function(playlist) {
             $state.go('finder.playlist.dups',{uid: playlist.owner.id, id: playlist.id})
-        }
+        };
+        $scope.load();
     }]);
 
     app.controller("DupsCtrl",['$scope', '$stateParams',function($scope, $stateParams){
-        console.log('mldkqjs');
         $scope.uid = $stateParams['uid'];
         $scope.id = $stateParams['id'];
+
     }]);
 
     app.controller('AuthCtrl',['$scope', '$rootScope', '$interval', '$http', function($scope, $rootScope, $interval, $http){
