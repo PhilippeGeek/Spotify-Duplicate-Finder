@@ -2,7 +2,7 @@
     <h2 class="pull-left">Playlist</h2>
 </div>
 <div class="list-group ">
-    <a ng-class="playlist == current?'list-group-item active':'list-group-item'" ng-repeat="playlist in playlists" ng-click="open(playlist)">
+    <a ng-class="current.playlistId == playlist.id?'list-group-item active':'list-group-item'" ng-repeat="playlist in playlists" ng-click="open(playlist)">
         {{playlist.name}}
     </a>
 </div>

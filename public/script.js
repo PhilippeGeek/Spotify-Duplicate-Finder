@@ -2,7 +2,7 @@
 
 (function(){
 
-    var app = angular.module('app',['ui.router']);
+    var app = angular.module('app',['ui.router', 'ngStorage']);
 
     app.config(['$stateProvider','$urlRouterProvider',function($stateProvider, $urlRouterProvider){
         $stateProvider
@@ -41,10 +41,19 @@
         $urlRouterProvider.otherwise("/");
     }]);
 
-    app.run(['$rootScope', '$state',function($rootScope, $state){
-        $rootScope.access_token = "";
-        $rootScope.refresh_token = "";
-        $rootScope.$watch('access_token',function(newVal, oldVal, scope){
+    app.run(['$rootScope', '$state', '$localStorage',function($rootScope, $state, $localStorage){
+        $rootScope.$storage = $localStorage.$default({
+            access_token: "",
+            refresh_token: ""
+        });
+        $rootScope.access_token = $rootScope.$storage.access_token;
+        $rootScope.refresh_token = $rootScope.$storage.refresh_token;
+
+        $rootScope.$watch('access_token', function(newVal, oldVal, scope){
+
+            $rootScope.$storage.access_token = $rootScope.access_token;
+            $rootScope.$storage.refresh_token = $rootScope.refresh_token;
+
             if(oldVal == "" && newVal != ""){
                 $state.go('finder.playlist');
             } else if (oldVal != "" && newVal == ""){
@@ -65,7 +74,7 @@
     }]);
 
     app.controller("MainCtrl",['$scope', '$state',function($scope, $state){
-
+        $scope.current = {playlistId: undefined};
     }]);
 
     app.controller("PlaylistCtrl",['$scope', '$http', '$state',function($scope, $http, $state){
@@ -82,9 +91,8 @@
                 }
             })
         };
-        $scope.current = undefined;
         $scope.open = function(playlist) {
-            $scope.current = playlist;
+            $scope.current.playlistId = playlist.id;
             $state.go('finder.playlist.dups',{uid: playlist.owner.id, id: playlist.id})
         };
         $scope.load();
@@ -93,6 +101,7 @@
     app.controller("DupsCtrl",['$scope', '$stateParams', '$http',function($scope, $stateParams, $http){
         $scope.uid = $stateParams['uid'];
         $scope.id = $stateParams['id'];
+        $scope.current.playlistId = $scope.id;
         $scope.tracks = [];
         $scope.loaded = false;
         $scope.load = function () {
