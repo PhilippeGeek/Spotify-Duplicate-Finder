@@ -2,10 +2,43 @@
 
 (function(){
 
-    var app = angular.module('app',[]);
+    var app = angular.module('app',['ui.router']);
 
-    app.controller('AuthCtrl',['$scope', function($scope){
+    app.config(['$stateProvider','$urlRouterProvider',function($stateProvider, $urlRouterProvider){
+        $stateProvider
+            .state('finder_public',{
+                templateUrl:'partials/home.html',
+                url: '/',
+                controller: 'HomeCtrl'
+            })
+            .state('finder',{
+                templateUrl:'partials/logged.html',
+                url: '/finder',
+                controller: 'MainCtrl'
+            })
+            .state('finder.playlist',{
+                url: '/playlist',
+                views: {
+                    playlist:{
+                        templateUrl: 'partials/playlist.html',
+                        controller: 'PlaylistCtrl'
+                    }
+                }
+            })
+            .state('finder.playlist.dups',{
+                url: '/playlist/:id',
+                views: {
+                    dups: {
+                        templateUrl: 'partials/dups.html',
+                        controller: 'DupsCtrl'
+                    }
+                }
+            })
+    }]);
 
+    app.controller('AuthCtrl',['$scope', '$rootScope', function($scope, $rootScope){
+        $rootScope.access_token = "Bonjour";
+        $rootScope.refresh_token = "Bonjour2";
     }])
 
 })();
