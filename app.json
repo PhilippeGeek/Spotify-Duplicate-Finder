@@ -1,0 +1,26 @@
+{
+  "name": "spotify-duplicate-finder",
+  "description": "Duplicate finder for your Spotify playlists",
+  "scripts": {
+  },
+  "addons": [
+
+  ],
+  "buildpacks": [
+    {
+      "url": "https://github.com/heroku/heroku-buildpack-nodejs"
+    }
+  ],
+  "env": {
+    "CLIENT_SECRET": {
+      "description": "Spotify client secret"
+    },
+    "CLIENT_ID": {
+      "description": "Spotify client id"
+    },
+    "CALLBACK": {
+      "description": "The callback URL",
+      "value": "http://your-app.herokuapp.com/callback"
+    }
+  }
+}
