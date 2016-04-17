@@ -2,6 +2,10 @@
     display: none;
 }
 
+#login {
+    display: inline-block;
+}
+
 .text-overflow {
     overflow: hidden;
     text-overflow: ellipsis;
