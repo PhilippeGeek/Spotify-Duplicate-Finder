@@ -103,7 +103,7 @@
 <script id="playlists-template" type="text/x-handlebars-template">
     <h2>Playlists</h2>
     {{#list playlists}}
-    <a class="pl_item list-group-item btn has-spinner" href="/pl/{{pl_uid}}/{{pl_id}}">
+    <a class="pl_item list-group-item has-spinner" href="/pl/{{pl_uid}}/{{pl_id}}">
         {{pl_name}}
         <span class="spinner"><i class="icon-spin icon-refresh"></i></span>
         <i class="glyphicon glyphicon-chevron-right"></i>
@@ -226,6 +226,7 @@
                 var currentElement = $(this);
                 currentElement.addClass('active');
                 currentElement.addClass('loading');
+                $('#dups').toggleClass('hide');
                 $.ajax({
                     url: $(this).attr('href'),
                     data: {
@@ -252,6 +253,7 @@
                             pl_name: pl_name
                         });
                     }
+                    $('#dups').toggleClass('hide');
                 })
             });
 
