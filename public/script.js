@@ -82,7 +82,9 @@
                 }
             })
         };
+        $scope.current = undefined;
         $scope.open = function(playlist) {
+            $scope.current = playlist;
             $state.go('finder.playlist.dups',{uid: playlist.owner.id, id: playlist.id})
         };
         $scope.load();

@@ -1,9 +1,8 @@
 <div class="clearfix">
     <h2 class="pull-left">Playlist</h2>
-    <a class="btn btn-default pull-right" ng-click="load()">Load</a>
 </div>
 <div class="list-group ">
-    <div class="list-group-item" ng-repeat="playlist in playlists" ng-click="open(playlist)">
+    <a ng-class="playlist == current?'list-group-item active':'list-group-item'" ng-repeat="playlist in playlists" ng-click="open(playlist)">
         {{playlist.name}}
-    </div>
+    </a>
 </div>
