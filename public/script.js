@@ -136,6 +136,10 @@
             }, 500);
             return false;
         };
+        $scope.logout = function(){
+            $rootScope.refresh_token = "";
+            $rootScope.access_token = "";
+        };
         $scope.refresh = function(){
             if($rootScope.refresh_token)
                 $http.get('/refresh_token',{params: {refresh_token: $rootScope.refresh_token}})
