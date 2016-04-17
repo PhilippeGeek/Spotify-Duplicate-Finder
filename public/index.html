@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/3.0.2/css/font-awesome.css">
     <link rel="stylesheet" href="./style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
 </head>
 
 <body>
@@ -12,17 +13,11 @@
     <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
             <a class="navbar-brand" href="#">DuplicateFinder</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse">
+        <div>
             <ul class="nav navbar-nav">
                 <li class="active"><a href="#">Finder</a></li>
             </ul>
@@ -31,7 +26,10 @@
                     <a ng-click="login()" href="#"><b>Login With Spotify</b></a>
                 </li>
                 <li ng-if="access_token != ''">
-                    <a ng-click="refresh()" href="#"><b>Refresh my token</b></a>
+                    <a ng-click="refresh()" href="#">Refresh my token</a>
+                </li>
+                <li ng-if="access_token != ''">
+                    <a ng-click="logout()" href="#"><b>Logout</b></a>
                 </li>
             </ul>
         </div><!-- /.navbar-collapse -->
